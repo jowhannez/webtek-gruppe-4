@@ -1,0 +1,20 @@
+.homepage {
+    text-align: center;
+}
+
+.homepage__title {
+    font-size: 2rem;
+    margin: 5rem auto 1rem;
+}
+
+.homepage__description {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.game {
+    border: 2px dashed #111111;
+    border-radius: 1rem;
+    background: #222222;
+    cursor: pointer;
+}

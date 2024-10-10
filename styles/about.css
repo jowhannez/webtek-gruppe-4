@@ -1,0 +1,13 @@
+.about {
+    text-align: center;
+}
+
+.about__title {
+    font-size: 2rem;
+    margin: 5rem auto 1rem;
+}
+
+.about__description {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
