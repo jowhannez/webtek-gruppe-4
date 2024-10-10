@@ -17,3 +17,5 @@ Dette klarer vi fint skal dere se :)
 5. Voila, du har prosjektet lokalt og er klar til å starte utvikling!
 
 Skriv likesågodt ```code .``` for å åpne prosjektet i VSCode med en gang. 
+
+6. (Frivillig) Mas på Johannes og få opplæring i git/utvikling/matlaging/hva som helst.
