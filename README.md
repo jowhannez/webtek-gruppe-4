@@ -19,3 +19,4 @@ Dette klarer vi fint skal dere se :)
 Skriv likesågodt ```code .``` for å åpne prosjektet i VSCode med en gang. 
 
 6. (Frivillig) Mas på Johannes og få opplæring i git/utvikling/matlaging/hva som helst.
+   
