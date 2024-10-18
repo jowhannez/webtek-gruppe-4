@@ -11,11 +11,20 @@
  * 
  * These are the constants that are used throughout the game.
  */
-const CANVAS 			    = document.getElementById('game');
-const FRAMES_PER_SECOND     = 60;
-const PRODUCT_SIZE 		    = 30;
-const PRODUCT_START_HEIGHT  = PRODUCT_SIZE;
-const SPEED 			    = 2;
+const CANVAS               = document.getElementById('game');
+const FRAMES_PER_SECOND    = 60;
+const PRODUCT_AMOUNT       = 5;
+const PRODUCT_SIZE         = 30;
+const PRODUCT_START_HEIGHT = PRODUCT_SIZE;
+const PRODUCT_COLOR        = 'red';
+const PRODUCT_SPEED        = 2;
+
+const PLAYER_SIZE          = 40;
+const PLAYER_COLOR         = 'blue';
+const PLAYER_SPEED         = 5;
+
+const TEXT_COLOR           = 'black';
+const TEXT_FONT            = '20px Arial';
 
 /**
  * Product class
@@ -38,7 +47,7 @@ class Product {
 	 * Draws the product on the canvas in its current position.
 	 */
 	draw() {
-		this.ctx.fillStyle = 'red';
+		this.ctx.fillStyle = PRODUCT_COLOR;
 		this.ctx.beginPath();
 		this.ctx.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
 		this.ctx.fill();
@@ -52,7 +61,7 @@ class Product {
 	 * The x position is also reset to a random value.
 	 */
 	move() {
-		this.y += SPEED;
+		this.y += PRODUCT_SPEED;
 
 		if (this.y > CANVAS.height + PRODUCT_SIZE) {
 			this.y = PRODUCT_START_HEIGHT;
@@ -68,15 +77,15 @@ class Product {
  */
 class Player {
 	constructor(context) {
-		this.ctx = context;
-		this.x = CANVAS.width / 2;
-		this.y = CANVAS.height - 50;
-		this.width = 40;
-		this.height = 40;
+		this.ctx    = context;
+		this.x      = CANVAS.width / 2;
+		this.y      = CANVAS.height - 50;
+		this.width  = PLAYER_SIZE;
+		this.height = PLAYER_SIZE;
 	}
 
 	draw() {
-		this.ctx.fillStyle = 'blue';
+		this.ctx.fillStyle = PLAYER_COLOR;
 		this.ctx.beginPath();
 		this.ctx.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
 		this.ctx.fill();
@@ -84,11 +93,11 @@ class Player {
 	}
 
 	moveLeft() {
-		this.x -= 5;
+		this.x -= PLAYER_SPEED;
 	}
 
 	moveRight() {
-		this.x += 5;
+		this.x += PLAYER_SPEED;
 	}
 }
 
@@ -108,9 +117,9 @@ class ShoppingGame {
 		this.canvas    = document.getElementById('game');
 		this.ctx       = this.canvas.getContext('2d');
 		this.obstacles = [];
-		this.timer	   = 0;
+		this.timer     = 0;
 		this.player    = new Player(this.ctx);
-		this.products  = Array.from({ length: 5 }, () => new Product(this.ctx)); 
+		this.products  = Array.from({ length: PRODUCT_AMOUNT }, () => new Product(this.ctx));
 	}
 
 	/**
@@ -148,7 +157,6 @@ class ShoppingGame {
 	 */
 	drawProducts() {
 		for (const product of this.products) {
-			console.log(product);
 			product.draw();
 			product.move();
 		}
@@ -158,8 +166,8 @@ class ShoppingGame {
 	 * Draws the score
 	 */
 	drawScore() {
-		this.ctx.fillStyle = 'black';
-		this.ctx.font = '20px Arial';
+		this.ctx.fillStyle = TEXT_COLOR;
+		this.ctx.font      = TEXT_FONT;
 		this.ctx.fillText('Score: 0', 10, 40);
 	}
 
@@ -167,12 +175,12 @@ class ShoppingGame {
 	 * Draws the timer
 	 */
 	drawTimer() {
-		this.ctx.fillStyle = 'black';
-		this.ctx.font = '20px Arial';
+		this.ctx.fillStyle = TEXT_COLOR;
+		this.ctx.font      = TEXT_FONT;
 		this.ctx.fillText(`Time: ${parseInt(this.timer)}`, 10, 20);
 	}
 }
 
 // Create a new instance of the game and start the game loop
 const game = new ShoppingGame();
-setInterval(() => game.update(), 1000/FRAMES_PER_SECOND);
+setInterval(() => game.update(), 1000 / FRAMES_PER_SECOND);
