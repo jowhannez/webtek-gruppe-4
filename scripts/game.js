@@ -13,6 +13,7 @@
  */
 const CANVAS               = document.getElementById('game');
 const FRAMES_PER_SECOND    = 60;
+const BACKGROUND_COLOR     = 'white';
 
 const PRODUCT_AMOUNT       = 5;
 const PRODUCT_SIZE         = 30;
@@ -115,8 +116,8 @@ class Player {
  */
 class ShoppingGame {
 	constructor() {
-		this.canvas    = document.getElementById('game');
-		this.ctx       = this.canvas.getContext('2d');
+		this.canvas    = CANVAS;
+		this.ctx       = CANVAS.getContext('2d');
 		this.obstacles = [];
 		this.timer     = 0;
 		this.player    = new Player(this.ctx);
@@ -142,7 +143,7 @@ class ShoppingGame {
 	 * Draws the background of the canvas.
 	 */
 	drawBackground() {
-		this.ctx.fillStyle = 'white';
+		this.ctx.fillStyle = BACKGROUND_COLOR;
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
