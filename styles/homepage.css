@@ -13,7 +13,6 @@
 }
 
 .game {
-    border: 2px dashed #111111;
     border-radius: 1rem;
     background: #222222;
     cursor: pointer;
