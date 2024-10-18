@@ -23,7 +23,7 @@ const PRODUCT_SPEED        = 2;
 
 const PLAYER_SIZE          = 40;
 const PLAYER_COLOR         = 'blue';
-const PLAYER_SPEED         = 5;
+const PLAYER_SPEED         = 10;
 
 const TEXT_COLOR           = 'black';
 const TEXT_FONT            = '20px Arial';
@@ -125,6 +125,16 @@ class ShoppingGame {
 	}
 
 	/**
+	 * Initializes the game
+	 * 
+	 * This method is called once when the game is started.
+	 * It sets up the game state and event listeners.
+	 */
+	init () {
+		this.listenForInput();
+	}
+
+	/**
 	 * Main game loop
 	 * 
 	 * This method is called every frame and updates the game state.
@@ -181,8 +191,25 @@ class ShoppingGame {
 		this.ctx.font      = TEXT_FONT;
 		this.ctx.fillText(`Time: ${parseInt(this.timer)}`, 10, 20);
 	}
+
+	/**
+	 * Listens for player input
+	 */
+	listenForInput() {
+		document.addEventListener('keydown', (event) => {
+			switch (event.key) {
+				case 'ArrowLeft':
+					this.player.moveLeft();
+					break;
+				case 'ArrowRight':
+					this.player.moveRight();
+					break;
+			}
+		});
+	}
 }
 
 // Create a new instance of the game and start the game loop
 const game = new ShoppingGame();
+game.init();
 setInterval(() => game.update(), 1000 / FRAMES_PER_SECOND);
