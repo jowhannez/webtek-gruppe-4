@@ -13,6 +13,7 @@
  */
 const CANVAS               = document.getElementById('game');
 const FRAMES_PER_SECOND    = 60;
+
 const PRODUCT_AMOUNT       = 5;
 const PRODUCT_SIZE         = 30;
 const PRODUCT_START_HEIGHT = PRODUCT_SIZE;
