@@ -16,10 +16,10 @@ const FRAMES_PER_SECOND    = 60;
 const BACKGROUND_COLOR     = 'white';
 
 const PRODUCT_AMOUNT       = 5;
-const PRODUCT_SIZE         = 30;
+const PRODUCT_SIZE         = 60;
 const PRODUCT_START_HEIGHT = PRODUCT_SIZE;
 const PRODUCT_COLOR        = 'red';
-const PRODUCT_SPEED        = 2;
+const PRODUCT_SPEED        = 1;
 
 const PLAYER_SIZE          = 40;
 const PLAYER_COLOR         = 'blue';
@@ -38,22 +38,32 @@ const TEXT_FONT            = '20px Arial';
  */
 class Product {
 	constructor(context) {
-		this.ctx    = context;
-		this.x      = Math.random() * CANVAS.width;
-		this.y      = Math.random() * CANVAS.height;
-		this.width  = PRODUCT_SIZE;
+		this.ctx = context;
+		this.x = Math.random() * CANVAS.width;
+		this.y = Math.random() * CANVAS.height;
+		this.width = PRODUCT_SIZE;
 		this.height = PRODUCT_SIZE;
+
+        this.image = new Image();  
+		let randomNumber = Math.floor(Math.random() * 22) + 1;  
+		this.image.src = 'images/FoodFraSverige/bilde' + randomNumber + '.jpg';
 	}
 
 	/**
 	 * Draws the product on the canvas in its current position.
 	 */
 	draw() {
-		this.ctx.fillStyle = PRODUCT_COLOR;
-		this.ctx.beginPath();
-		this.ctx.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
-		this.ctx.fill();
-		this.ctx.closePath();
+ 
+        if (this.image.complete) {  
+            this.ctx.drawImage(this.image, this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+        } else {
+  
+            this.ctx.fillStyle = PRODUCT_COLOR;
+            this.ctx.beginPath();
+            this.ctx.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
+            this.ctx.fill();
+            this.ctx.closePath();
+        }
 	}
 
 	/**
@@ -145,8 +155,6 @@ class ShoppingGame {
 		this.drawProducts();
 		this.drawScore();
 		this.drawTimer();
-
-		this.timer += 1 / FRAMES_PER_SECOND;
 	}
 
 	/**
