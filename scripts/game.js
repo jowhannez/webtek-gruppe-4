@@ -45,7 +45,7 @@ class Product {
 		this.height = PRODUCT_SIZE;
 
         this.image = new Image();  
-		let randomNumber = Math.floor(Math.random() * 22) + 1;  
+		let randomNumber = Math.floor(Math.random() * 21) + 1;  
 		this.image.src = 'images/FoodFraSverige/bilde' + randomNumber + '.jpg';
 	}
 
