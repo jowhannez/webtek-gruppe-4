@@ -43,10 +43,12 @@ class Product {
 		this.y = Math.random() * CANVAS.height;
 		this.width = PRODUCT_SIZE;
 		this.height = PRODUCT_SIZE;
+		this.scored = false;
 
         this.image = new Image();  
-		let randomNumber = Math.floor(Math.random() * 12) + 1;  
-		this.image.src = 'images/FoodFraSverige/bilde' + randomNumber + '.png';
+        this.imageNumber = Math.floor(Math.random() * 12) + 1; 
+        this.image.src = 'images/FoodFraSverige/bilde' + this.imageNumber + '.png';
+        this.imageName = 'bilde' + this.imageNumber; 
 	}
 
 	/**
@@ -73,12 +75,12 @@ class Product {
 	 * The x position is also reset to a random value.
 	 */
 	move() {
-		this.y += PRODUCT_SPEED;
-
-		if (this.y > CANVAS.height + PRODUCT_SIZE) {
-			this.y = PRODUCT_START_HEIGHT;
-			this.x = Math.random() * CANVAS.width;
-		}
+        this.y += PRODUCT_SPEED;
+        if (this.y > CANVAS.height + this.height) {
+            this.y = PRODUCT_START_HEIGHT;
+            this.x = Math.random() * CANVAS.width;
+            this.scored = false; 
+        }
 	}
 }
 
@@ -88,29 +90,42 @@ class Product {
  * This class represents the player in the game.
  */
 class Player {
-	constructor(context) {
-		this.ctx    = context;
-		this.x      = CANVAS.width / 2;
-		this.y      = CANVAS.height - 50;
-		this.width  = PLAYER_SIZE;
-		this.height = PLAYER_SIZE;
-	}
+    constructor(context) {
+        this.ctx = context;
+        this.x = CANVAS.width / 2;
+        this.y = CANVAS.height - 50;
+        this.width = PLAYER_SIZE;
+        this.height = PLAYER_SIZE;
 
-	draw() {
-		this.ctx.fillStyle = PLAYER_COLOR;
-		this.ctx.beginPath();
-		this.ctx.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
-		this.ctx.fill();
-		this.ctx.closePath();
-	}
+        this.image = new Image();
+        this.image.src = 'images/handlevogn.png'; 
+        this.loaded = false;
+        this.image.onload = () => {
+            this.loaded = true;
+        };
+    }
 
-	moveLeft() {
-		this.x -= PLAYER_SPEED;
-	}
+    draw() {
+        if (this.loaded) {
+            this.ctx.drawImage(this.image, this.x - this.width, this.y - this.height, this.width*3, this.height*2);
+        } else {
+            this.ctx.fillStyle = PLAYER_COLOR;
+            this.ctx.beginPath();
+            this.ctx.arc(this.x, this.y, this.width / 2, 0, 2 * Math.PI);
+            this.ctx.fill();
+            this.ctx.closePath();
+        }
+    }
 
-	moveRight() {
-		this.x += PLAYER_SPEED;
-	}
+    moveLeft() {
+        this.x -= PLAYER_SPEED;
+        if (this.x < this.width / 2) this.x = this.width / 2; 
+    }
+
+    moveRight() {
+        this.x += PLAYER_SPEED;
+        if (this.x > CANVAS.width - this.width / 2) this.x = CANVAS.width - this.width / 2; 
+    }
 }
 
 
@@ -129,9 +144,11 @@ class ShoppingGame {
 		this.canvas    = CANVAS;
 		this.ctx       = CANVAS.getContext('2d');
 		this.obstacles = [];
-		this.timer     = 0;
+		this.timer     = 60;
 		this.player    = new Player(this.ctx);
 		this.products  = Array.from({ length: PRODUCT_AMOUNT }, () => new Product(this.ctx));
+		this.scoreManager = new Score();
+		this.gameInterval = setInterval(() => this.update(), 1000 / FRAMES_PER_SECOND);
 	}
 
 	/**
@@ -151,11 +168,29 @@ class ShoppingGame {
 	 */
 	update() {
 		this.drawBackground();
-		this.drawPlayer();
-		this.drawProducts();
-		this.drawScore();
+        this.player.draw();
+        this.products.forEach(product => {
+            product.draw();
+            product.move();
+            if (this.checkCollision(this.player, product) && !product.scored) {
+                this.scoreManager.addScore(product); 
+				product.scored = true;
+            }
+        });
+        this.scoreManager.displayScore(this.ctx); 
 		this.drawTimer();
+        this.timer -= 1 / FRAMES_PER_SECOND; 
+
+        if (this.timer <= 0) {
+            clearInterval(this.gameInterval); 
+            this.timer = 0; 
+            alert("Game Over! Your final score is: " + this.scoreManager.value);
+        }
 	}
+
+	checkCollision(player, product) {
+        return Math.hypot(player.x - product.x, player.y - product.y) < (player.width / 2 + product.width / 2);
+    }
 
 	/**
 	 * Draws the background of the canvas.
@@ -216,6 +251,30 @@ class ShoppingGame {
 		});
 	}
 }
+
+
+class Score {
+    constructor() {
+        this.value = 0;
+    }
+
+	//jeg skal legge mer bilder her...  
+    addScore(product) {
+        if (product.imageName >= 'bilde1' && product.imageName <= 'bilde7') {
+            this.value += 5;
+        } else if (product.imageName >= 'bilde8' && product.imageName <= 'bilde12') {
+            this.value += 10;
+        }
+    }
+
+    displayScore(ctx) {
+        ctx.fillStyle = TEXT_COLOR;
+        ctx.font = TEXT_FONT;
+        ctx.fillText('Score: ' + this.value, 10, 40);
+    }
+}
+
+
 
 // Create a new instance of the game and start the game loop
 const game = new ShoppingGame();
