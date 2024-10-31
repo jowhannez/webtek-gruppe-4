@@ -46,7 +46,7 @@ class Product {
 
         this.image = new Image();  
 		let randomNumber = Math.floor(Math.random() * 21) + 1;  
-		this.image.src = 'images/FoodFraSverige/bilde' + randomNumber + '.jpg';
+		this.image.src = 'images/FoodFraSverige/bilde' + randomNumber + '.png';
 	}
 
 	/**
