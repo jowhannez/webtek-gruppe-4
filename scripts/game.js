@@ -260,9 +260,9 @@ class Score {
 
 	//jeg skal legge mer bilder her...  
     addScore(product) {
-        if (product.imageName >= 'bilde1' && product.imageName <= 'bilde7') {
+        if (product.imageName >= 'bilde1' && product.imageName <= 'bilde11') {
             this.value += 5;
-        } else if (product.imageName >= 'bilde8' && product.imageName <= 'bilde12') {
+        } else if (product.imageName >= 'bilde12' && product.imageName <= 'bilde22') {
             this.value += 10;
         }
     }
