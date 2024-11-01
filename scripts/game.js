@@ -46,7 +46,7 @@ class Product {
 		this.scored = false;
 
         this.image = new Image();  
-        this.imageNumber = Math.floor(Math.random() * 12) + 1; 
+        this.imageNumber = Math.floor(Math.random() * 22) + 1; 
         this.image.src = 'images/FoodFraSverige/bilde' + this.imageNumber + '.png';
         this.imageName = 'bilde' + this.imageNumber; 
 	}
