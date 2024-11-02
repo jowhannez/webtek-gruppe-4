@@ -12,21 +12,25 @@
  * These are the constants that are used throughout the game.
  */
 const CANVAS               = document.getElementById('game');
-const FRAMES_PER_SECOND    = 60;
+const FRAMES_PER_SECOND    = 120;
 const BACKGROUND_COLOR     = 'white';
 
 const PRODUCT_AMOUNT       = 5;
 const PRODUCT_SIZE         = 60;
 const PRODUCT_START_HEIGHT = PRODUCT_SIZE;
 const PRODUCT_COLOR        = 'red';
-const PRODUCT_SPEED        = 1;
+const PRODUCT_SPEED        = 0.5;
 
 const PLAYER_SIZE          = 40;
 const PLAYER_COLOR         = 'blue';
-const PLAYER_SPEED         = 10;
+const PLAYER_SPEED         = 5;
 
 const TEXT_COLOR           = 'black';
 const TEXT_FONT            = '20px Arial';
+
+const GAME_SCENE   = 1;
+const FINISH_SCENE = 2;
+let scene = GAME_SCENE;
 
 /**
  * Product class
@@ -55,7 +59,6 @@ class Product {
 	 * Draws the product on the canvas in its current position.
 	 */
 	draw() {
- 
         if (this.image.complete) {  
             this.ctx.drawImage(this.image, this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
         } else {
@@ -144,11 +147,11 @@ class ShoppingGame {
 		this.canvas    = CANVAS;
 		this.ctx       = CANVAS.getContext('2d');
 		this.obstacles = [];
-		this.timer     = 60;
+		this.timer     = 5;
 		this.player    = new Player(this.ctx);
 		this.products  = Array.from({ length: PRODUCT_AMOUNT }, () => new Product(this.ctx));
 		this.scoreManager = new Score();
-		this.gameInterval = setInterval(() => this.update(), 1000 / FRAMES_PER_SECOND);
+		this.keyState  = {}
 	}
 
 	/**
@@ -157,7 +160,7 @@ class ShoppingGame {
 	 * This method is called once when the game is started.
 	 * It sets up the game state and event listeners.
 	 */
-	init () {
+	init() {
 		this.listenForInput();
 	}
 
@@ -182,9 +185,8 @@ class ShoppingGame {
         this.timer -= 1 / FRAMES_PER_SECOND; 
 
         if (this.timer <= 0) {
-            clearInterval(this.gameInterval); 
             this.timer = 0; 
-            alert("Game Over! Your final score is: " + this.scoreManager.value);
+			scene = FINISH_SCENE;
         }
 	}
 
@@ -252,7 +254,6 @@ class ShoppingGame {
 	}
 }
 
-
 class Score {
     constructor() {
         this.value = 0;
@@ -274,9 +275,160 @@ class Score {
     }
 }
 
+class Finish {
+	constructor() {
+		this.canvas      = CANVAS;
+		this.ctx         = CANVAS.getContext('2d');
+		this.harrysFate  = Math.floor((Math.random() * 10) + 1);
+		this.harryX      = 450;
+		this.harryY      = 340;
+		this.initialized = false;
+	}
 
+	init() {
+		if (!this.initialized) {
+			this.bakgrunn();
+		}
+		this.initialized = true;
+	}
+
+	bakgrunn() {
+		this.ctx.fillStyle = BACKGROUND_COLOR;
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		//Fengsel
+		const yTop         = 250;
+		const yBottom      = 500;
+		const xStart       = 250;
+		const moveDistance = 20;
+		for (let i = 0; i < 13; i++) {
+			this.ctx.moveTo(xStart - moveDistance * i, yTop);
+			this.ctx.lineTo(xStart - moveDistance * i, yBottom);
+		}
+		this.ctx.stroke();
+		this.ctx.font="40px italic";
+		this.ctx.fillStyle = "black"
+		this.ctx.fillText("Kasjotten", 50, 200);
+	
+		//Solnedgang
+		this.ctx.fillText("Solnedgangen",760, 200);
+		this.ctx.fillStyle = "lightblue";
+		this.ctx.fillRect(750, 250, 250, 100);
+		this.ctx.fillStyle = "green";
+		this.ctx.fillRect(750, 350, 250, 150);
+		this.ctx.stroke();
+	
+		this.ctx.fillStyle = "grey";
+		this.ctx.beginPath();
+		this.ctx.moveTo(770, 500);
+		this.ctx.lineTo(850, 350)
+		this.ctx.lineTo(890, 350);
+		this.ctx.lineTo(970, 500);
+		this.ctx.closePath();
+		this.ctx.fill();
+		this.ctx.stroke();
+	
+		// Sola
+		this.ctx.fillStyle = "red";
+		this.ctx.beginPath();
+		this.ctx.arc(870, 250, 40, 0, 1 * Math.PI);
+		this.ctx.closePath();
+		this.ctx.fill();
+		this.ctx.stroke();
+	
+		this.ctx.font="25px italic";
+		this.ctx.fillStyle = "black";
+		this.ctx.fillText("Du nærmer deg grensa og må ta et valg...", 10, 30);
+		this.ctx.fillText("1) Du kan velge tollen der du mister 25% av poengene....eller",10, 60 )
+		this.ctx.fillText("2) Du kan krysse grensa og beholde alt.. eller havne i kasjotten",10, 80)
+	}
+
+	sisteBilde() {
+		this.ctx.fillStyle = BACKGROUND_COLOR;
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.fillStyle = "green";
+		this.ctx.fillRect(0, 150, 1000, 350);
+		this.ctx.fillStyle = "lightblue";
+		this.ctx.fillRect(0, 0, 1000, 150);
+		this.ctx.fillStyle = "grey";
+		this.ctx.beginPath(50, 500);
+		this.ctx.lineTo(125, 150);
+		this.ctx.lineTo(175, 150);
+		this.ctx.lineTo(250, 500);
+		this.ctx.lineTo(50, 500);
+		this.ctx.closePath();
+		this.ctx.fill();
+		this.ctx.fillStyle ="yellow"
+		this.ctx.fillRect(500, 75, 250, 200);
+		this.ctx.stroke();
+		this.ctx.strokeStyle = "black"
+		this.ctx.moveTo(500, 275);
+		this.ctx.lineTo(500, 400);
+		this.ctx.moveTo(750, 275);
+		this.ctx.lineTo(750, 400);
+		this.ctx.fillStyle = "black";
+		this.ctx.font="40px italic";
+		this.ctx.fillText("Norge", 570, 180);
+		this.ctx.stroke();
+		this.ctx.moveTo(500, 75);
+		this.ctx.lineTo(625, 75);
+		this.ctx.lineTo(500, 125);
+		this.ctx.lineTo(500, 75)
+		this.ctx.fill();
+		this.ctx.moveTo(750, 75);
+		this.ctx.lineTo(625, 75);
+		this.ctx.lineTo(750, 125);
+		this.ctx.lineTo(750, 75);
+		this.ctx.fill();
+	}
+
+	flyttHarry(til) {
+		const interval = setInterval(() => {
+			if (this.harryX == til) {
+				clearInterval(interval);
+			} else {
+				this.bakgrunn();
+				this.harryX += this.harryX < til ? 1 : -1;
+				this.tegnHarry();
+			}
+		}, 10);
+	}
+
+	tegnHarry() {
+		this.ctx.fillRect(this.harryX, this.harryY, 50, 50);
+		this.ctx.stroke();
+	}
+
+	bestemHarrysSkjebne() {
+		if (this.harrysFate < 4) {
+			//Bevegelse_kasj();
+			this.flyttHarry(100);
+		} else {
+			//Bevegelse_sol();
+			this.flyttHarry(900);
+			setTimeout(() => this.sisteBilde(), 5000);
+		}
+	}
+}
 
 // Create a new instance of the game and start the game loop
-const game = new ShoppingGame();
+const game   = new ShoppingGame();
+const finish = new Finish();
+
 game.init();
-setInterval(() => game.update(), 1000 / FRAMES_PER_SECOND);
+setInterval(() => {
+	if (scene == GAME_SCENE) {
+		game.update()
+	} else if (scene == FINISH_SCENE) {
+		finish.init();
+	}
+}, 1000 / FRAMES_PER_SECOND);
+
+const buttons = document.querySelectorAll('[data-button]');
+buttons.forEach(button => {
+	button.addEventListener('click', () => {
+		const value = button.dataset.button;
+		if (value == 3) {
+			finish.bestemHarrysSkjebne();
+		}
+	});
+});
