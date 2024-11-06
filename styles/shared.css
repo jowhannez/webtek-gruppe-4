@@ -89,3 +89,10 @@ a {
     width: 100%;
     text-align: center;
 }
+
+li{
+    color: #111111;
+    list-style-type: 1;
+    text-align: left;
+    
+}
