@@ -14,8 +14,6 @@
             text-align: center;
         }
 
-
-
         .header__link {
             color: white;
             text-decoration: none;
@@ -42,16 +40,22 @@
             padding: 20px;
             width: 200px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
         }
 
         .team-member img {
-            width: 100%;
-            border-radius: 10px;
+            width: 150px; /* Fixed width */
+            height: 150px; /* Fixed height, to ensure all images are the same size */
+            object-fit: cover; /* Ensure images cover the area without distorting aspect ratio */
+            border-radius: 50%; /* Make images round */
         }
 
         .team-member h3 {
             color: #5f27cd;
-            margin: 15px 0 5px;
+            margin: 5px 0 5px;
         }
 
         .team-member p {
@@ -82,24 +86,28 @@
         <h1>Om oss!</h1>
         <section class="team">
             <div class="team-member">
-                <img src="path_to_image" alt="Johannes">
-                <h3>Webutvikler: Vår kjære gründer!</h3>
-                <p>Han er mannen med planene og visjonene. Alltid på jakt etter nye muligheter, og holder oss på rett spor. Uten ham, ville vi mest sannsynlig fortsatt diskutert om hvor vi skulle starte!</p>
+                <img src="../images/oss/johannes.png" alt="Johannes">
+                <h3>Johannes</h3>
+                <h4>Webutvikler: Vår kjære gründer!</h4>
+                <p>Han er mannen med planene og visjonene. Alltid på jakt etter nye muligheter, og holder oss på rett spor. Uten ham, ville vi mest sannsynlig fortsatt diskutert om hvor vi skulle starte! Johannes koordinerer alle tekniske aspekter av vårt spillprosjekt, sikrer at webinfrastrukturen støtter en sømløs spillopplevelse.</p>
             </div>
             <div class="team-member">
-                <img src="path_to_image" alt="Øyvind">
-                <h3>Tannlegen: Bit for bit lærer han alt!</h3>
-                <p>Fra tannlegestolen til tastaturet, vår tannlege er alltid klar til å lære. Hvem sa at man ikke kan trekke ut visdom om både tenner og teknologi samtidig?</p>
+                <img src="../images/oss/oyvind2.png" alt="Øyvind">
+                <h3>Øyvind</h3>
+                <h4>Tannlegen: Bit for bit lærer han alt!</h4>
+                <p>Fra tannlegestolen til tastaturet, vår tannlege er alltid klar til å lære. Øyvind bringer sin presisjon og tålmodighet fra tannklinikken til kodens verden. Han har også en viktig rolle i prosjektets dokumentasjon, hvor han sørger for at all teknisk informasjon er nøyaktig, oppdatert og tilgjengelig.</p>
             </div>
             <div class="team-member">
-                <img src="path_to_image" alt="Ethem">
-                <h3>Miljøterapeuten: Med omsorg for koden!</h3>
-                <p>Han er alltid klar til å bidra for å sikre at oppgavene blir fullført til rett tid, akkurat som han gjør i sitt daglige arbeid.</p>
+                <img src="../images/oss/ethem.png" alt="Ethem">
+                <h3>Ethem</h3>
+                <h4>Miljøterapeuten: Med omsorg for koden!</h4>
+                <p>Han er alltid klar til å bidra for å sikre at oppgavene blir fullført til rett tid, akkurat som han gjør i sitt daglige arbeid. Ethem sørger for at vårt arbeidsmiljø er støttende og inkluderende, hvilket gjør det mulig for alle teammedlemmer å utføre sitt beste arbeid under optimal stressfri tilstand.</p>
             </div>
             <div class="team-member">
-                <img src="path_to_image" alt="Linda Busra">
-                <h3>Software testeren: Oppdrag fullført!</h3>
-                <p>Vår testekspert er alltid på oppgaven. Hun er en ekte lagspiller. Hvis noe går galt, kan du være sikker på at hun finner det!</p>
+                <img src="../images/oss/linda.png" alt="Linda Busra">
+                <h3>Linda</h3>
+                <h4>Software testeren: Oppdrag fullført!</h4>
+                <p>Vår testekspert er alltid på oppgaven. Hun er en ekte lagspiller. Hvis noe går galt, kan du være sikker på at hun finner det! Linda Busra's erfaring med software testing sikrer at alle spillelementene fungerer som de skal før de når våre spillere, minimere bugs og forbedre brukeropplevelsen.</p>
             </div>
         </section>
     </main>
