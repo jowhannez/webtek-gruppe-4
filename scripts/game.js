@@ -144,14 +144,14 @@ class Player {
  */
 class ShoppingGame {
 	constructor() {
-		this.canvas    = CANVAS;
-		this.ctx       = CANVAS.getContext('2d');
-		this.obstacles = [];
-		this.timer     = 5;
-		this.player    = new Player(this.ctx);
-		this.products  = Array.from({ length: PRODUCT_AMOUNT }, () => new Product(this.ctx));
+		this.canvas       = CANVAS;
+		this.ctx          = CANVAS.getContext('2d');
+		this.obstacles    = [];
+		this.timer        = 60;
+		this.player       = new Player(this.ctx);
+		this.products     = Array.from({ length: PRODUCT_AMOUNT }, () => new Product(this.ctx));
 		this.scoreManager = new Score();
-		this.keyState  = {}
+		this.keyState     = {}
 	}
 
 	/**
@@ -198,8 +198,18 @@ class ShoppingGame {
 	 * Draws the background of the canvas.
 	 */
 	drawBackground() {
-		this.ctx.fillStyle = BACKGROUND_COLOR;
-		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		const img = new Image();
+		img.src = 'images/bakgrunn.webp';
+		
+		const aspectRatio = img.width / img.height;
+		let newWidth = this.canvas.width;
+		let newHeight = newWidth / aspectRatio;
+
+		const canvasAspectRatio = newHeight / this.canvas.height;
+		newWidth /= canvasAspectRatio;
+		newHeight /= canvasAspectRatio;
+
+		this.ctx.drawImage(img, 0, 0, newWidth, newHeight);
 	}
 
 	/**
