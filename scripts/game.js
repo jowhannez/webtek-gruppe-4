@@ -28,9 +28,10 @@ const PLAYER_SPEED         = 2;
 const TEXT_COLOR           = 'black';
 const TEXT_FONT            = '20px Arial';
 
+const START_SCENE  = 0;
 const GAME_SCENE   = 1;
 const FINISH_SCENE = 2;
-let scene = GAME_SCENE;
+let scene = START_SCENE;
 
 /**
  * Product class
@@ -217,6 +218,8 @@ class ShoppingGame {
 		newWidth /= canvasAspectRatio;
 		newHeight /= canvasAspectRatio;
 
+		console.log('drawing background image');
+
 		this.ctx.drawImage(img, 0, 0, newWidth, newHeight);
 	}
 
@@ -294,6 +297,30 @@ class Score {
         ctx.font = TEXT_FONT;
         ctx.fillText('Score: ' + this.value, 10, 64);
     }
+}
+
+class Start {
+	constructor() {
+		this.canvas      = CANVAS;
+		this.ctx         = CANVAS.getContext('2d');
+		this.initialized = false;
+	}
+
+	init() {
+		const img = new Image();
+		img.src = 'images/start.webp';
+
+		const aspectRatio = img.width / img.height;
+		let newWidth = this.canvas.width;
+		let newHeight = newWidth / aspectRatio;
+
+		const canvasAspectRatio = newHeight / this.canvas.height;
+		newWidth /= canvasAspectRatio;
+		newHeight /= canvasAspectRatio;
+
+		console.log('drawing start image');
+		this.ctx.drawImage(img, -500, 0, newWidth, newHeight);
+	}
 }
 
 class Finish {
@@ -432,12 +459,14 @@ class Finish {
 }
 
 // Create a new instance of the game and start the game loop
+const start  = new Start();
 const game   = new ShoppingGame();
 const finish = new Finish();
 
-game.init();
 setInterval(() => {
-	if (scene == GAME_SCENE) {
+	if (scene == START_SCENE) {
+		start.init();
+	} else if (scene == GAME_SCENE) {
 		game.update()
 	} else if (scene == FINISH_SCENE) {
 		finish.init();
@@ -448,8 +477,11 @@ const buttons = document.querySelectorAll('[data-button]');
 buttons.forEach(button => {
 	button.addEventListener('click', () => {
 		const value = button.dataset.button;
-		if (value == 3) {
-			finish.bestemHarrysSkjebne();
+		if (value == 'start') {
+			CANVAS.getContext('2d').clearRect(0, 0, CANVAS.width, CANVAS.height);
+			game.init();
+			scene = GAME_SCENE;
+			button.style.display = 'none';
 		}
 	});
 });
