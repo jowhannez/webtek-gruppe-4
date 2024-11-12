@@ -238,21 +238,16 @@ class ShoppingGame {
 	}
 
 	/**
-	 * Draws the score
-	 */
-	drawScore() {
-		this.ctx.fillStyle = TEXT_COLOR;
-		this.ctx.font      = TEXT_FONT;
-		this.ctx.fillText('Score: 0', 10, 40);
-	}
-
-	/**
 	 * Draws the timer
 	 */
 	drawTimer() {
 		this.ctx.fillStyle = TEXT_COLOR;
 		this.ctx.font      = TEXT_FONT;
-		this.ctx.fillText(`Time: ${parseInt(this.timer)}`, 10, 20);
+		if (this.timer <= 10) {
+			this.ctx.fillStyle = 'red';
+		}
+
+		this.ctx.fillText(`Time: ${parseInt(this.timer)}`, 16, 32);
 	}
 
 	/**
@@ -286,9 +281,18 @@ class Score {
     }
 
     displayScore(ctx) {
+		// draw a background for the score
+		ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+		ctx.fillRect(0, 0, 110, 80);
+
+		// draw a border around the score to the right and bottom
+		ctx.strokeStyle = 'black';
+		ctx.strokeRect(0, 0, 110, 80);
+		
+
         ctx.fillStyle = TEXT_COLOR;
         ctx.font = TEXT_FONT;
-        ctx.fillText('Score: ' + this.value, 10, 40);
+        ctx.fillText('Score: ' + this.value, 10, 64);
     }
 }
 
