@@ -23,7 +23,7 @@ const PRODUCT_SPEED        = 0.5;
 
 const PLAYER_SIZE          = 40;
 const PLAYER_COLOR         = 'blue';
-const PLAYER_SPEED         = 5;
+const PLAYER_SPEED         = 2;
 
 const TEXT_COLOR           = 'black';
 const TEXT_FONT            = '20px Arial';
@@ -94,30 +94,26 @@ class Product {
  */
 class Player {
     constructor(context) {
-        this.ctx = context;
-        this.x = CANVAS.width / 2;
-        this.y = CANVAS.height - 50;
-        this.width = PLAYER_SIZE;
-        this.height = PLAYER_SIZE;
-
-        this.image = new Image();
+        this.ctx       = context;
+        this.x         = CANVAS.width / 2;
+        this.y         = CANVAS.height - 50;
+        this.width     = PLAYER_SIZE;
+        this.height    = PLAYER_SIZE;
+		this.reverse   = false;
+        this.image     = new Image();
         this.image.src = 'images/handlevogn.png'; 
-        this.loaded = false;
-        this.image.onload = () => {
-            this.loaded = true;
-        };
     }
 
     draw() {
-        if (this.loaded) {
-            this.ctx.drawImage(this.image, this.x - this.width, this.y - this.height, this.width*3, this.height*2);
-        } else {
-            this.ctx.fillStyle = PLAYER_COLOR;
-            this.ctx.beginPath();
-            this.ctx.arc(this.x, this.y, this.width / 2, 0, 2 * Math.PI);
-            this.ctx.fill();
-            this.ctx.closePath();
-        }
+		if (this.reverse) {
+			this.ctx.save();
+			this.ctx.translate(this.x, this.y);
+			this.ctx.scale(-1, 1);
+			this.ctx.drawImage(this.image, -this.width, -this.height, this.width*3, this.height*2);
+			this.ctx.restore();
+		} else {
+			this.ctx.drawImage(this.image, this.x - this.width, this.y - this.height, this.width*3, this.height*2);
+		}
     }
 
     moveLeft() {
@@ -171,15 +167,27 @@ class ShoppingGame {
 	 */
 	update() {
 		this.drawBackground();
+
+		if (this.keyState['ArrowLeft']) {
+			this.player.reverse = true;
+			this.player.moveLeft();
+		}
+		if (this.keyState['ArrowRight']) {
+			this.player.reverse = false;
+			this.player.moveRight();
+		}
         this.player.draw();
+
         this.products.forEach(product => {
             product.draw();
             product.move();
             if (this.checkCollision(this.player, product) && !product.scored) {
                 this.scoreManager.addScore(product); 
 				product.scored = true;
+				product.x = -100;
             }
         });
+
         this.scoreManager.displayScore(this.ctx); 
 		this.drawTimer();
         this.timer -= 1 / FRAMES_PER_SECOND; 
@@ -251,15 +259,14 @@ class ShoppingGame {
 	 * Listens for player input
 	 */
 	listenForInput() {
-		document.addEventListener('keydown', (event) => {
-			switch (event.key) {
-				case 'ArrowLeft':
-					this.player.moveLeft();
-					break;
-				case 'ArrowRight':
-					this.player.moveRight();
-					break;
-			}
+		// when a key is pressed, set the key state to true
+		window.addEventListener('keydown', (event) => {
+			this.keyState[event.key] = true;
+		});
+		
+		// when a key is released, set the key state to false
+		window.addEventListener('keyup', (event) => {
+			this.keyState[event.key] = false;
 		});
 	}
 }
