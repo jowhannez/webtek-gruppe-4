@@ -4,7 +4,7 @@
 
 .homepage__title {
     font-size: 2rem;
-    margin: 5rem auto 1rem;
+    margin: 3rem auto 1rem;
 }
 
 .homepage__description {
@@ -12,7 +12,22 @@
     margin-bottom: 2rem;
 }
 
+.game__container {
+    position: relative;
+    width: 1000px;
+    height: 600px;
+    margin: 0 auto;
+}
 .game {
     border-radius: 1rem;
     background: #222222;
+}
+.game__start-button {
+    position: absolute;
+    width: 295px;
+    right: 50px;
+    top: 28px;
+    height: 53px;
+    color: black;
+    font-size: 25px;
 }

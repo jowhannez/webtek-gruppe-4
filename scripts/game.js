@@ -23,14 +23,15 @@ const PRODUCT_SPEED        = 0.5;
 
 const PLAYER_SIZE          = 40;
 const PLAYER_COLOR         = 'blue';
-const PLAYER_SPEED         = 5;
+const PLAYER_SPEED         = 2;
 
 const TEXT_COLOR           = 'black';
 const TEXT_FONT            = '20px Arial';
 
+const START_SCENE  = 0;
 const GAME_SCENE   = 1;
 const FINISH_SCENE = 2;
-let scene = GAME_SCENE;
+let scene = START_SCENE;
 
 /**
  * Product class
@@ -94,30 +95,26 @@ class Product {
  */
 class Player {
     constructor(context) {
-        this.ctx = context;
-        this.x = CANVAS.width / 2;
-        this.y = CANVAS.height - 50;
-        this.width = PLAYER_SIZE;
-        this.height = PLAYER_SIZE;
-
-        this.image = new Image();
+        this.ctx       = context;
+        this.x         = CANVAS.width / 2;
+        this.y         = CANVAS.height - 50;
+        this.width     = PLAYER_SIZE;
+        this.height    = PLAYER_SIZE;
+		this.reverse   = false;
+        this.image     = new Image();
         this.image.src = 'images/handlevogn.png'; 
-        this.loaded = false;
-        this.image.onload = () => {
-            this.loaded = true;
-        };
     }
 
     draw() {
-        if (this.loaded) {
-            this.ctx.drawImage(this.image, this.x - this.width, this.y - this.height, this.width*3, this.height*2);
-        } else {
-            this.ctx.fillStyle = PLAYER_COLOR;
-            this.ctx.beginPath();
-            this.ctx.arc(this.x, this.y, this.width / 2, 0, 2 * Math.PI);
-            this.ctx.fill();
-            this.ctx.closePath();
-        }
+		if (this.reverse) {
+			this.ctx.save();
+			this.ctx.translate(this.x, this.y);
+			this.ctx.scale(-1, 1);
+			this.ctx.drawImage(this.image, -this.width, -this.height, this.width*3, this.height*2);
+			this.ctx.restore();
+		} else {
+			this.ctx.drawImage(this.image, this.x - this.width, this.y - this.height, this.width*3, this.height*2);
+		}
     }
 
     moveLeft() {
@@ -144,14 +141,14 @@ class Player {
  */
 class ShoppingGame {
 	constructor() {
-		this.canvas    = CANVAS;
-		this.ctx       = CANVAS.getContext('2d');
-		this.obstacles = [];
-		this.timer     = 5;
-		this.player    = new Player(this.ctx);
-		this.products  = Array.from({ length: PRODUCT_AMOUNT }, () => new Product(this.ctx));
+		this.canvas       = CANVAS;
+		this.ctx          = CANVAS.getContext('2d');
+		this.obstacles    = [];
+		this.timer        = 60;
+		this.player       = new Player(this.ctx);
+		this.products     = Array.from({ length: PRODUCT_AMOUNT }, () => new Product(this.ctx));
 		this.scoreManager = new Score();
-		this.keyState  = {}
+		this.keyState     = {}
 	}
 
 	/**
@@ -171,15 +168,27 @@ class ShoppingGame {
 	 */
 	update() {
 		this.drawBackground();
+
+		if (this.keyState['ArrowLeft']) {
+			this.player.reverse = true;
+			this.player.moveLeft();
+		}
+		if (this.keyState['ArrowRight']) {
+			this.player.reverse = false;
+			this.player.moveRight();
+		}
         this.player.draw();
+
         this.products.forEach(product => {
             product.draw();
             product.move();
             if (this.checkCollision(this.player, product) && !product.scored) {
                 this.scoreManager.addScore(product); 
 				product.scored = true;
+				product.x = -100;
             }
         });
+
         this.scoreManager.displayScore(this.ctx); 
 		this.drawTimer();
         this.timer -= 1 / FRAMES_PER_SECOND; 
@@ -198,8 +207,20 @@ class ShoppingGame {
 	 * Draws the background of the canvas.
 	 */
 	drawBackground() {
-		this.ctx.fillStyle = BACKGROUND_COLOR;
-		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		const img = new Image();
+		img.src = 'images/bakgrunn.webp';
+		
+		const aspectRatio = img.width / img.height;
+		let newWidth = this.canvas.width;
+		let newHeight = newWidth / aspectRatio;
+
+		const canvasAspectRatio = newHeight / this.canvas.height;
+		newWidth /= canvasAspectRatio;
+		newHeight /= canvasAspectRatio;
+
+		console.log('drawing background image');
+
+		this.ctx.drawImage(img, 0, 0, newWidth, newHeight);
 	}
 
 	/**
@@ -220,36 +241,30 @@ class ShoppingGame {
 	}
 
 	/**
-	 * Draws the score
-	 */
-	drawScore() {
-		this.ctx.fillStyle = TEXT_COLOR;
-		this.ctx.font      = TEXT_FONT;
-		this.ctx.fillText('Score: 0', 10, 40);
-	}
-
-	/**
 	 * Draws the timer
 	 */
 	drawTimer() {
 		this.ctx.fillStyle = TEXT_COLOR;
 		this.ctx.font      = TEXT_FONT;
-		this.ctx.fillText(`Time: ${parseInt(this.timer)}`, 10, 20);
+		if (this.timer <= 10) {
+			this.ctx.fillStyle = 'red';
+		}
+
+		this.ctx.fillText(`Time: ${parseInt(this.timer)}`, 16, 32);
 	}
 
 	/**
 	 * Listens for player input
 	 */
 	listenForInput() {
-		document.addEventListener('keydown', (event) => {
-			switch (event.key) {
-				case 'ArrowLeft':
-					this.player.moveLeft();
-					break;
-				case 'ArrowRight':
-					this.player.moveRight();
-					break;
-			}
+		// when a key is pressed, set the key state to true
+		window.addEventListener('keydown', (event) => {
+			this.keyState[event.key] = true;
+		});
+		
+		// when a key is released, set the key state to false
+		window.addEventListener('keyup', (event) => {
+			this.keyState[event.key] = false;
 		});
 	}
 }
@@ -269,10 +284,43 @@ class Score {
     }
 
     displayScore(ctx) {
+		// draw a background for the score
+		ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+		ctx.fillRect(0, 0, 110, 80);
+
+		// draw a border around the score to the right and bottom
+		ctx.strokeStyle = 'black';
+		ctx.strokeRect(0, 0, 110, 80);
+		
+
         ctx.fillStyle = TEXT_COLOR;
         ctx.font = TEXT_FONT;
-        ctx.fillText('Score: ' + this.value, 10, 40);
+        ctx.fillText('Score: ' + this.value, 10, 64);
     }
+}
+
+class Start {
+	constructor() {
+		this.canvas      = CANVAS;
+		this.ctx         = CANVAS.getContext('2d');
+		this.initialized = false;
+	}
+
+	init() {
+		const img = new Image();
+		img.src = 'images/start.webp';
+
+		const aspectRatio = img.width / img.height;
+		let newWidth = this.canvas.width;
+		let newHeight = newWidth / aspectRatio;
+
+		const canvasAspectRatio = newHeight / this.canvas.height;
+		newWidth /= canvasAspectRatio;
+		newHeight /= canvasAspectRatio;
+
+		console.log('drawing start image');
+		this.ctx.drawImage(img, -500, 0, newWidth, newHeight);
+	}
 }
 
 class Finish {
@@ -411,12 +459,14 @@ class Finish {
 }
 
 // Create a new instance of the game and start the game loop
+const start  = new Start();
 const game   = new ShoppingGame();
 const finish = new Finish();
 
-game.init();
 setInterval(() => {
-	if (scene == GAME_SCENE) {
+	if (scene == START_SCENE) {
+		start.init();
+	} else if (scene == GAME_SCENE) {
 		game.update()
 	} else if (scene == FINISH_SCENE) {
 		finish.init();
@@ -427,8 +477,11 @@ const buttons = document.querySelectorAll('[data-button]');
 buttons.forEach(button => {
 	button.addEventListener('click', () => {
 		const value = button.dataset.button;
-		if (value == 3) {
-			finish.bestemHarrysSkjebne();
+		if (value == 'start') {
+			CANVAS.getContext('2d').clearRect(0, 0, CANVAS.width, CANVAS.height);
+			game.init();
+			scene = GAME_SCENE;
+			button.style.display = 'none';
 		}
 	});
 });
