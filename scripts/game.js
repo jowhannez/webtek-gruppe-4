@@ -424,3 +424,10 @@ buttons.forEach(button => {
 		}
 	});
 });
+
+function startGame() {
+    game.init(); // Oyun başlatma fonksiyonu
+    document.getElementById('gameIntroMusic').play(); // Müziği çal
+}
+
+

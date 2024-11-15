@@ -6,8 +6,11 @@
     <title>Webteknologi - Prosjektgruppe 4</title>
     <link rel="stylesheet" href="./styles/shared.css">
     <link rel="stylesheet" href="./styles/homepage.css">
+
 </head>
 <body>
+    <audio id="gameIntroMusic" src="assets/audio/trailer-beat-112303.mp3" loop></audio>
+    
     <header class="header">
         <nav class="header__menu">
             <a class="header__link" href="./index.html">Hjem</a>
@@ -23,7 +26,8 @@
             
             <section class="game__container">
                 <canvas id="game" class="game" width="1000" height="600"></canvas>
-                <button class="game__start-button" data-button="start">Start spill</button>
+                <button class="game__start-button" data-button="start" onclick="document.getElementById('gameIntroMusic').play()">Start spill</button>
+
 
                 <div class="game__content" data-finish-content>
                     <p>Du har varer verdt <span class="game__score" data-score></span></p>
