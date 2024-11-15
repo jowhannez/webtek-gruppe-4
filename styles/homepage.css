@@ -31,3 +31,38 @@
     color: black;
     font-size: 25px;
 }
+.game__restart-button {
+    width: 295px;
+    height: 53px;
+    color: black;
+    font-size: 25px;
+}
+.game__content {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    color: white;
+    font-size: 2rem;
+    transition: opacity 1s;
+}
+.game__finish-button {
+    width: 295px;
+    right: 50px;
+    top: 28px;
+    height: 53px;
+    color: black;
+    font-size: 25px;
+    margin-bottom: 16px;
+}
+.game__score {
+    color: green;
+    font-size: 32px;
+}
+.game__toll {
+    color: red;
+    font-size: 32px;
+}

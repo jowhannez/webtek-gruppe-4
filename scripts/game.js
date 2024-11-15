@@ -21,7 +21,7 @@ const PRODUCT_START_HEIGHT = PRODUCT_SIZE;
 const PRODUCT_COLOR        = 'red';
 const PRODUCT_SPEED        = 0.5;
 
-const PLAYER_SIZE          = 40;
+const PLAYER_HEIGHT        = 40;
 const PLAYER_COLOR         = 'blue';
 const PLAYER_SPEED         = 2;
 
@@ -98,8 +98,8 @@ class Player {
         this.ctx       = context;
         this.x         = CANVAS.width / 2;
         this.y         = CANVAS.height - 50;
-        this.width     = PLAYER_SIZE;
-        this.height    = PLAYER_SIZE;
+        this.width     = PLAYER_HEIGHT * 2;
+        this.height    = PLAYER_HEIGHT;
 		this.reverse   = false;
         this.image     = new Image();
         this.image.src = 'images/handlevogn.png'; 
@@ -110,10 +110,10 @@ class Player {
 			this.ctx.save();
 			this.ctx.translate(this.x, this.y);
 			this.ctx.scale(-1, 1);
-			this.ctx.drawImage(this.image, -this.width, -this.height, this.width*3, this.height*2);
+			this.ctx.drawImage(this.image, -(this.width/1.3), -this.height, this.width*1.5, this.height*2);
 			this.ctx.restore();
 		} else {
-			this.ctx.drawImage(this.image, this.x - this.width, this.y - this.height, this.width*3, this.height*2);
+			this.ctx.drawImage(this.image, this.x - (this.width/1.3), this.y - this.height, this.width*1.5, this.height*2);
 		}
     }
 
@@ -144,7 +144,7 @@ class ShoppingGame {
 		this.canvas       = CANVAS;
 		this.ctx          = CANVAS.getContext('2d');
 		this.obstacles    = [];
-		this.timer        = 60;
+		this.timer        = 3;
 		this.player       = new Player(this.ctx);
 		this.products     = Array.from({ length: PRODUCT_AMOUNT }, () => new Product(this.ctx));
 		this.scoreManager = new Score();
@@ -159,6 +159,8 @@ class ShoppingGame {
 	 */
 	init() {
 		this.listenForInput();
+		this.timer        = 3;
+		this.scoreManager = new Score();
 	}
 
 	/**
@@ -196,6 +198,13 @@ class ShoppingGame {
         if (this.timer <= 0) {
             this.timer = 0; 
 			scene = FINISH_SCENE;
+			const finishContainer = document.querySelector('[data-finish-content]');
+			const scoreContainers = document.querySelector('[data-score]');
+			scoreContainers.innerHTML = `${this.scoreManager.value},- kr`;
+			setTimeout(() => {
+				finishContainer.style.opacity = 1;
+				finishContainer.style.pointerEvents = 'all';
+			}, 500);
         }
 	}
 
@@ -271,16 +280,18 @@ class ShoppingGame {
 
 class Score {
     constructor() {
-        this.value = 0;
+        this.value = 500;
     }
 
 	//jeg skal legge mer bilder her...  
     addScore(product) {
-        if (product.imageName >= 'bilde1' && product.imageName <= 'bilde11') {
-            this.value += 5;
-        } else if (product.imageName >= 'bilde12' && product.imageName <= 'bilde22') {
+        if (product.imageNumber <= 11) {
+            this.value += 20;
+        } else if (product.imageNumber <= 22) {
             this.value += 10;
-        }
+        } else {
+			this.value += 5;
+		}
     }
 
     displayScore(ctx) {
@@ -325,136 +336,13 @@ class Start {
 
 class Finish {
 	constructor() {
-		this.canvas      = CANVAS;
-		this.ctx         = CANVAS.getContext('2d');
-		this.harrysFate  = Math.floor((Math.random() * 10) + 1);
-		this.harryX      = 450;
-		this.harryY      = 340;
-		this.initialized = false;
+		this.canvas = CANVAS;
+		this.ctx    = CANVAS.getContext('2d');
 	}
-
 	init() {
-		if (!this.initialized) {
-			this.bakgrunn();
-		}
-		this.initialized = true;
-	}
-
-	bakgrunn() {
-		this.ctx.fillStyle = BACKGROUND_COLOR;
+		// draw background with color #6d7f8f
+		this.ctx.fillStyle = '#333333';
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-		//Fengsel
-		const yTop         = 250;
-		const yBottom      = 500;
-		const xStart       = 250;
-		const moveDistance = 20;
-		for (let i = 0; i < 13; i++) {
-			this.ctx.moveTo(xStart - moveDistance * i, yTop);
-			this.ctx.lineTo(xStart - moveDistance * i, yBottom);
-		}
-		this.ctx.stroke();
-		this.ctx.font="40px italic";
-		this.ctx.fillStyle = "black"
-		this.ctx.fillText("Kasjotten", 50, 200);
-	
-		//Solnedgang
-		this.ctx.fillText("Solnedgangen",760, 200);
-		this.ctx.fillStyle = "lightblue";
-		this.ctx.fillRect(750, 250, 250, 100);
-		this.ctx.fillStyle = "green";
-		this.ctx.fillRect(750, 350, 250, 150);
-		this.ctx.stroke();
-	
-		this.ctx.fillStyle = "grey";
-		this.ctx.beginPath();
-		this.ctx.moveTo(770, 500);
-		this.ctx.lineTo(850, 350)
-		this.ctx.lineTo(890, 350);
-		this.ctx.lineTo(970, 500);
-		this.ctx.closePath();
-		this.ctx.fill();
-		this.ctx.stroke();
-	
-		// Sola
-		this.ctx.fillStyle = "red";
-		this.ctx.beginPath();
-		this.ctx.arc(870, 250, 40, 0, 1 * Math.PI);
-		this.ctx.closePath();
-		this.ctx.fill();
-		this.ctx.stroke();
-	
-		this.ctx.font="25px italic";
-		this.ctx.fillStyle = "black";
-		this.ctx.fillText("Du nærmer deg grensa og må ta et valg...", 10, 30);
-		this.ctx.fillText("1) Du kan velge tollen der du mister 25% av poengene....eller",10, 60 )
-		this.ctx.fillText("2) Du kan krysse grensa og beholde alt.. eller havne i kasjotten",10, 80)
-	}
-
-	sisteBilde() {
-		this.ctx.fillStyle = BACKGROUND_COLOR;
-		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-		this.ctx.fillStyle = "green";
-		this.ctx.fillRect(0, 150, 1000, 350);
-		this.ctx.fillStyle = "lightblue";
-		this.ctx.fillRect(0, 0, 1000, 150);
-		this.ctx.fillStyle = "grey";
-		this.ctx.beginPath(50, 500);
-		this.ctx.lineTo(125, 150);
-		this.ctx.lineTo(175, 150);
-		this.ctx.lineTo(250, 500);
-		this.ctx.lineTo(50, 500);
-		this.ctx.closePath();
-		this.ctx.fill();
-		this.ctx.fillStyle ="yellow"
-		this.ctx.fillRect(500, 75, 250, 200);
-		this.ctx.stroke();
-		this.ctx.strokeStyle = "black"
-		this.ctx.moveTo(500, 275);
-		this.ctx.lineTo(500, 400);
-		this.ctx.moveTo(750, 275);
-		this.ctx.lineTo(750, 400);
-		this.ctx.fillStyle = "black";
-		this.ctx.font="40px italic";
-		this.ctx.fillText("Norge", 570, 180);
-		this.ctx.stroke();
-		this.ctx.moveTo(500, 75);
-		this.ctx.lineTo(625, 75);
-		this.ctx.lineTo(500, 125);
-		this.ctx.lineTo(500, 75)
-		this.ctx.fill();
-		this.ctx.moveTo(750, 75);
-		this.ctx.lineTo(625, 75);
-		this.ctx.lineTo(750, 125);
-		this.ctx.lineTo(750, 75);
-		this.ctx.fill();
-	}
-
-	flyttHarry(til) {
-		const interval = setInterval(() => {
-			if (this.harryX == til) {
-				clearInterval(interval);
-			} else {
-				this.bakgrunn();
-				this.harryX += this.harryX < til ? 1 : -1;
-				this.tegnHarry();
-			}
-		}, 10);
-	}
-
-	tegnHarry() {
-		this.ctx.fillRect(this.harryX, this.harryY, 50, 50);
-		this.ctx.stroke();
-	}
-
-	bestemHarrysSkjebne() {
-		if (this.harrysFate < 4) {
-			//Bevegelse_kasj();
-			this.flyttHarry(100);
-		} else {
-			//Bevegelse_sol();
-			this.flyttHarry(900);
-			setTimeout(() => this.sisteBilde(), 5000);
-		}
 	}
 }
 
@@ -470,9 +358,12 @@ setInterval(() => {
 		game.update()
 	} else if (scene == FINISH_SCENE) {
 		finish.init();
-	}
+	} 
 }, 1000 / FRAMES_PER_SECOND);
 
+const finishContainer = document.querySelector('[data-finish-content]');
+const payContainer    = document.querySelector('[data-paid-content]');
+const sneakContainer  = document.querySelector('[data-caught-content]');
 const buttons = document.querySelectorAll('[data-button]');
 buttons.forEach(button => {
 	button.addEventListener('click', () => {
@@ -482,6 +373,54 @@ buttons.forEach(button => {
 			game.init();
 			scene = GAME_SCENE;
 			button.style.display = 'none';
+		} else if (value == 'pay') {
+			finishContainer.style.opacity = 0;
+			finishContainer.style.pointerEvents = 'none';
+			setTimeout(() => {
+				payContainer.style.opacity = 1;
+				payContainer.style.pointerEvents = 'all';
+				// remove 50% of the score
+				const toll = game.scoreManager.value / 2;
+				game.scoreManager.value = Math.floor(game.scoreManager.value) - toll;
+				const scoreContainers = document.querySelectorAll('[data-score]');
+				scoreContainers.forEach(container => {
+					container.innerHTML = `${game.scoreManager.value},- kr`;
+				});
+				const tollContainer = document.querySelector('[data-toll]');
+				tollContainer.innerHTML = `${toll},- kr`;
+			}, 1000);
+		} else if (value == 'sneak') {
+			finishContainer.style.opacity = 0;
+			finishContainer.style.pointerEvents = 'none';
+			setTimeout(() => {
+				// choose randomly if the player gets caught or not
+				const caught = Math.random() < 0.5;
+				if (caught) {
+					sneakContainer.style.opacity = 1;
+					sneakContainer.style.pointerEvents = 'all';
+					const toll = 0;
+					const scoreContainers = document.querySelectorAll('[data-score]');
+					scoreContainers.forEach(container => {
+						container.innerHTML = `${game.scoreManager.value},- kr`;
+					});
+					const tollContainer = document.querySelector('[data-toll]');
+					tollContainer.innerHTML = `${toll},- kr`;
+				} else {
+					payContainer.style.opacity = 1;
+					payContainer.style.pointerEvents = 'all';
+				}
+			}, 1000);
+		} else if (value == 'restart') {
+			finishContainer.style.opacity = 0;
+			finishContainer.style.pointerEvents = 'none';
+			payContainer.style.opacity = 0;
+			payContainer.style.pointerEvents = 'none';
+			sneakContainer.style.opacity = 0;
+			sneakContainer.style.pointerEvents = 'none';
+			setTimeout(() => {
+				game.init();
+				scene = GAME_SCENE;
+			}, 1000);
 		}
 	});
 });
