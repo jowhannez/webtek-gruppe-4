@@ -424,3 +424,10 @@ buttons.forEach(button => {
 		}
 	});
 });
+
+function startGame() {
+    game.init(); 
+    document.getElementById('gameIntroMusic').play(); 
+}
+
+
