@@ -402,7 +402,11 @@ buttons.forEach(button => {
 				if (caught) {
 					sneakContainer.style.opacity = 1;
 					sneakContainer.style.pointerEvents = 'all';
-					const toll = 0;
+				} else {
+					payContainer.style.opacity = 1;
+					payContainer.style.pointerEvents = 'all';
+					const toll = game.scoreManager.value / 2;
+					game.scoreManager.value = Math.floor(game.scoreManager.value) - toll;
 					const scoreContainers = document.querySelectorAll('[data-score]');
 					scoreContainers.forEach(container => {
 						container.innerHTML = `${game.scoreManager.value},- kr`;
@@ -411,9 +415,6 @@ buttons.forEach(button => {
 					tollContainers.forEach(container => {
 						container.innerHTML = `${toll},- kr`;
 					});
-				} else {
-					payContainer.style.opacity = 1;
-					payContainer.style.pointerEvents = 'all';
 				}
 			}, 1000);
 		} else if (value == 'restart') {
