@@ -144,7 +144,7 @@ class ShoppingGame {
 		this.canvas       = CANVAS;
 		this.ctx          = CANVAS.getContext('2d');
 		this.obstacles    = [];
-		this.timer        = 3;
+		this.timer        = 60;
 		this.player       = new Player(this.ctx);
 		this.products     = Array.from({ length: PRODUCT_AMOUNT }, () => new Product(this.ctx));
 		this.scoreManager = new Score();
