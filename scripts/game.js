@@ -159,7 +159,7 @@ class ShoppingGame {
 	 */
 	init() {
 		this.listenForInput();
-		this.timer        = 3;
+		this.timer        = 60;
 		this.scoreManager = new Score();
 	}
 
@@ -227,8 +227,6 @@ class ShoppingGame {
 		newWidth /= canvasAspectRatio;
 		newHeight /= canvasAspectRatio;
 
-		console.log('drawing background image');
-
 		this.ctx.drawImage(img, 0, 0, newWidth, newHeight);
 	}
 
@@ -280,7 +278,7 @@ class ShoppingGame {
 
 class Score {
     constructor() {
-        this.value = 500;
+        this.value = 0;
     }
 
 	//jeg skal legge mer bilder her...  
@@ -365,6 +363,8 @@ const finishContainer = document.querySelector('[data-finish-content]');
 const payContainer    = document.querySelector('[data-paid-content]');
 const sneakContainer  = document.querySelector('[data-caught-content]');
 const buttons = document.querySelectorAll('[data-button]');
+const introMusic = document.getElementById('gameIntroMusic');
+
 buttons.forEach(button => {
 	button.addEventListener('click', () => {
 		const value = button.dataset.button;
@@ -373,21 +373,25 @@ buttons.forEach(button => {
 			game.init();
 			scene = GAME_SCENE;
 			button.style.display = 'none';
+
+			introMusic.volume = 0.05;
+			introMusic.play(); 
 		} else if (value == 'pay') {
 			finishContainer.style.opacity = 0;
 			finishContainer.style.pointerEvents = 'none';
 			setTimeout(() => {
 				payContainer.style.opacity = 1;
 				payContainer.style.pointerEvents = 'all';
-				// remove 50% of the score
 				const toll = game.scoreManager.value / 2;
 				game.scoreManager.value = Math.floor(game.scoreManager.value) - toll;
 				const scoreContainers = document.querySelectorAll('[data-score]');
 				scoreContainers.forEach(container => {
 					container.innerHTML = `${game.scoreManager.value},- kr`;
 				});
-				const tollContainer = document.querySelector('[data-toll]');
-				tollContainer.innerHTML = `${toll},- kr`;
+				const tollContainers = document.querySelectorAll('[data-toll]');
+				tollContainers.forEach(container => {
+					container.innerHTML = `${toll},- kr`;
+				});
 			}, 1000);
 		} else if (value == 'sneak') {
 			finishContainer.style.opacity = 0;
@@ -403,8 +407,10 @@ buttons.forEach(button => {
 					scoreContainers.forEach(container => {
 						container.innerHTML = `${game.scoreManager.value},- kr`;
 					});
-					const tollContainer = document.querySelector('[data-toll]');
-					tollContainer.innerHTML = `${toll},- kr`;
+					const tollContainers = document.querySelectorAll('[data-toll]');
+					tollContainers.forEach(container => {
+						container.innerHTML = `${toll},- kr`;
+					});
 				} else {
 					payContainer.style.opacity = 1;
 					payContainer.style.pointerEvents = 'all';
@@ -427,7 +433,6 @@ buttons.forEach(button => {
 
 function startGame() {
     game.init(); 
-    document.getElementById('gameIntroMusic').play(); 
 }
 
 
