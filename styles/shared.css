@@ -85,6 +85,12 @@ a {
     gap: 1rem;
 }
 
+.header__link {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+}
+
 .footer__copyright {
     width: 100%;
     text-align: center;
