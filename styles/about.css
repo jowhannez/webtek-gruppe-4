@@ -40,9 +40,9 @@ h1 {
     border-radius: 10px;
 }
 
-.team-member h3 {
+.team-member h3, .team-member h4 {
     color: #5f27cd;
-    margin: 15px 0 5px;
+    margin: 5px 0 5px;
 }
 
 .team-member p {
